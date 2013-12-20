@@ -1,12 +1,15 @@
 import boto
 
+
 class Route53:
     """
     dnsadmin for AWS Route 53 Core Methods
-    """ 
+    """
     def __init__(self):
-        self.r53 = boto.connect_route53()
-
+        try:
+            self.r53 = boto.connect_route53()
+        except DNSServerError:
+            print 'Error'
 
     def list_zones(self):
         """
@@ -15,9 +18,9 @@ class Route53:
         self.zones = self.r53.get_zones()
         return self.zones
 
-    def get_zone(name):
+    def get_zone(self, dns_zone = 'devel.huit.harvard.edu'):
         """
         Get Zone. Valid Param is FQDN.
         """
-        self.zone = self.r53.get_zone(devel.huit.harvard.edu+'.')
+        self.zone = self.r53.get_zone(dns_zone+'.')
         return self.zone
