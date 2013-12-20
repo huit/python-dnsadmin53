@@ -8,19 +8,25 @@ class Route53:
     def __init__(self):
         try:
             self.r53 = boto.connect_route53()
-        except DNSServerError:
-            print 'Error'
+        except boto.route53.exception.DNSServerError as e:
+            print e
 
     def list_zones(self):
         """
         List Zones in Route53
         """
-        self.zones = self.r53.get_zones()
+        try:
+            self.zones = self.r53.get_zones()
+        except boto.route53.exception.DNSServerError as e:
+            print e
         return self.zones
 
     def get_zone(self, dns_zone = 'devel.huit.harvard.edu'):
         """
-        Get Zone. Valid Param is FQDN.
+        Get Zone Object. Valid Param is FQDN.
         """
-        self.zone = self.r53.get_zone(dns_zone+'.')
+        try:
+            self.zone = self.r53.get_zone(dns_zone+'.')
+        except boto.route53.exception.DNSServerError as e:
+            print e
         return self.zone
