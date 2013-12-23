@@ -40,3 +40,14 @@ class Route53:
         except boto.route53.exception.DNSServerError as e:
             print e
         return self.zone
+
+
+class IAM:
+    """
+    dnsadmin for AWS IAM Core Methods
+    """
+    def __init__(self):
+        try:
+            self.r53 = boto.connect_iam()
+        except boto.route53.exception.DNSServerError as e:
+            print e
