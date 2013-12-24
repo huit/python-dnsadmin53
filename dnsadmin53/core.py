@@ -49,14 +49,12 @@ class IAM:
     def __init__(self):
         self.iam = boto.connect_iam()
 
-
     def get_all_groups(self):
         """
         List all Groups
         """
         self.groups = self.iam.get_all_groups()
         return self.groups
-
 
     def list_policies(self):
         """
