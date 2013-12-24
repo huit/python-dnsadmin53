@@ -47,7 +47,20 @@ class IAM:
     dnsadmin for AWS IAM Core Methods
     """
     def __init__(self):
-        try:
-            self.r53 = boto.connect_iam()
-        except boto.route53.exception.DNSServerError as e:
-            print e
+        self.iam = boto.connect_iam()
+
+
+    def get_all_groups(self):
+        """
+        List all Groups
+        """
+        self.groups = self.iam.get_all_groups()
+        return self.groups
+
+
+    def list_policies(self):
+        """
+        List All Policies for a DNS Domain
+        """
+        self.policies = self.iam.get_all_group_policies()
+        return self.policies
