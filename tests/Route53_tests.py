@@ -24,3 +24,14 @@ def test_list_zone():
     r53 = core.Route53()
     zones = r53.list_zones()
     len(zones).should.equal(2)
+
+
+@mock_route53
+def test_does_zone_exist():
+    conn = boto.connect_route53()
+    conn.create_hosted_zone('devel.huit.harvard.edu.')
+
+    r53 = core.Route53()
+    result = r53.does_zone_exist('devel.huit.harvard.edu')
+    print result
+    tools.assert_true(result)

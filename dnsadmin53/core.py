@@ -41,6 +41,19 @@ class Route53:
             print e
         return self.zone
 
+    def does_zone_exist(self, dns_zone):
+        """
+        Check to see if a zone exists, return True if exists and False missing.
+        """
+        try:
+            dns_zone = dottify(dns_zone)
+            self.zone = self.r53.get_zone(dns_zone)
+            return True
+        except boto.route53.exception.DNSServerError as e:
+            print e
+        else:
+            return False
+
 
 class IAM:
     """
