@@ -1,4 +1,5 @@
 import boto
+import json
 
 
 def dottify(string):
@@ -66,12 +67,29 @@ class IAM:
         """
         List all Groups
         """
-        self.groups = self.iam.get_all_groups()
-        return self.groups
+        self.groups_l = []
+        try:
+            self.groups = self.iam.get_all_groups()
+            self.groups = self.groups['list_groups_response']['list_groups_result']['groups']
+            for group in self.groups:
+                self.groups_l.append(group['group_name'])
+        except:
+            print 'Error Getting Groups from IAM'
+        return self.groups_l
 
     def list_policies(self):
         """
         List All Policies for a DNS Domain
         """
-        self.policies = self.iam.get_all_group_policies()
+        self.policy_names = []
+        self.policies = []
+        try:
+            self.groups = self.iam.get_all_groups()
+            self.groups = self.groups['list_groups_response']['list_groups_result']['groups']
+            for group in self.groups:
+                self.policy_names.append(group['group_name'])
+            for policy in self.policy_names:
+                self.policies.append(self.iam.get_all_group_policies(policy))
+        except TypeError as e:
+            print e
         return self.policies
