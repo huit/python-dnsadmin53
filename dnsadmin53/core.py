@@ -59,7 +59,12 @@ class Route53:
 class IAM:
     """
     dnsadmin for AWS IAM Core Methods
-    """
+    """ 
+    trust_policy = { "Version": "2012-10-17", "Statement": [{ "Sid": "", "Effect": "Allow", "Principal": { "AWS": [] }, "Action": "sts:AssumeRole" }]}
+
+#          "arn:aws:iam::219880708180:root",
+#          "arn:aws:iam::691803950817:root"
+
     def __init__(self):
         self.iam = boto.connect_iam()
 
@@ -93,3 +98,28 @@ class IAM:
         except TypeError as e:
             print e
         return self.policies
+
+    def list_roles(self):
+        """
+        List Roles
+        """
+        try:
+            self.roles = self.iam.list_roles(path_prefix='/dnsadmin53/')
+            #self.roles = self.iam.list_roles()
+        except:
+            print 'Error getting Role List from IAM'
+        return self.roles
+
+    def create_role(self, dns_zone='timtest.huit.harvard.edu'):
+        """
+        Create DNSADMIN Role for a hosted zone.
+        """
+        path_prefix = '/dnsadmin53/'
+        role_name = 'UpdateZone-'+dns_zone
+        try:
+            self.instance_profile = self.iam.create_instance_profile(role_name, path=path_prefix)
+            self.role = self.iam.create_role(role_name, path=path_prefix)
+            self.iam.add_role_to_instance_profile(role_name, role_name)
+        except:
+            print 'Error Creating Role in IAM'
+
