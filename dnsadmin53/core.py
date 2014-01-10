@@ -109,15 +109,22 @@ class IAM:
             print 'Error getting Role List from IAM'
         return self.roles
 
-    def create_role(self, dns_zone='timtest.huit.harvard.edu'):
+    def create_role(self, dns_zone='timtest.huit.harvard.edu', zone_id='Z18FMOLWE15YNK'):
         """
         Create DNSADMIN Role for a hosted zone.
         """
         path_prefix = '/dnsadmin53/'
         role_name = 'UpdateZone-' + dns_zone
+        permission_policy = {"Version": "2012-10-17", "Statement":[{"Effect":"Allow","Action":["route53:ChangeResourceRecordSets"],"Resource":"arn:aws:route53:::hostedzone/" + zone_id},{"Effect":"Allow","Action":["route53:GetChange"],"Resource":"arn:aws:route53:::change/*"}]}
+        permission_policy = json.dumps(permission_policy, indent=2, separators=(',', ': '))
+
         try:
-            self.instance_profile = self.iam.create_instance_profile(role_name, path=path_prefix)
             self.role = self.iam.create_role(role_name, path=path_prefix)
+            self.instance_profile = self.iam.create_instance_profile(role_name, path=path_prefix)
             self.iam.add_role_to_instance_profile(role_name, role_name)
-        except:
+            self.iam.put_role_policy(role_name, 'UpdateZone', permission_policy)
+            print json.dumps(IAM.trust_policy)
+            print permission_policy
+        except Exception, e:
             print 'Error Creating Role in IAM'
+            print e
