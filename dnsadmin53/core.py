@@ -124,10 +124,13 @@ class IAM:
 
     def create_role(self, dns_zone, zone_id):
         """
-        Create DNSADMIN Role for a hosted zone.
+        Create DNSADMIN Role for a hosted zone. This creates a hosted zone with permissions that
+        allow updates records within a zone and ability to view status of changes, but without any
+        trust policies.
         """
         path_prefix = '/dnsadmin53/'
         role_name = 'UpdateZone-' + dns_zone
+        # It would be nice to make this var common either to the class or across core
         permission_policy = {"Version": "2012-10-17", "Statement": [{"Effect": "Allow", "Action": ["route53:ChangeResourceRecordSets"], "Resource": "arn:aws:route53:::hostedzone/" + zone_id}, {"Effect": "Allow", "Action": ["route53:GetChange"], "Resource": "arn:aws:route53:::change/*"}]}
         permission_policy = json.dumps(permission_policy, indent=2, separators=(',', ': '))
 
@@ -136,8 +139,12 @@ class IAM:
             self.instance_profile = self.iam.create_instance_profile(role_name, path=path_prefix)
             self.iam.add_role_to_instance_profile(role_name, role_name)
             self.iam.put_role_policy(role_name, 'UpdateZone', permission_policy)
-            print json.dumps(IAM.trust_policy)
-            print permission_policy
         except Exception, e:
             print 'Error Creating Role in IAM'
+            print e
+
+    def update_zone_trust_policy(self, trust_policy=trust_policy):
+        try:
+            print json.dumps(IAM.trust_policy)
+        except Exception as e:
             print e
