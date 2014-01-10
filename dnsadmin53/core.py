@@ -42,6 +42,19 @@ class Route53:
             print e
         return self.zone
 
+    def get_zone_id(self, dns_zone):
+        """
+        Get Zone ID.
+        """
+        try:
+            self.zone_id = self.r53.get_hosted_zone_by_name(dns_zone)
+            self.zone_id = self.zone_id['GetHostedZoneResponse']['HostedZone']['Id']
+            self.zone_id = self.zone_id.strip('/hostedzone/')
+        except Exception, e:
+            print e
+            print 'Error Getting Zone ID'
+        return self.zone_id
+
     def does_zone_exist(self, dns_zone):
         """
         Check to see if a zone exists, return True if exists and False missing.
@@ -109,7 +122,7 @@ class IAM:
             print 'Error getting Role List from IAM'
         return self.roles
 
-    def create_role(self, dns_zone='timtest.huit.harvard.edu', zone_id='Z18FMOLWE15YNK'):
+    def create_role(self, dns_zone, zone_id):
         """
         Create DNSADMIN Role for a hosted zone.
         """
