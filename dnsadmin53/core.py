@@ -115,7 +115,7 @@ class IAM:
         """
         path_prefix = '/dnsadmin53/'
         role_name = 'UpdateZone-' + dns_zone
-        permission_policy = {"Version": "2012-10-17", "Statement":[{"Effect":"Allow","Action":["route53:ChangeResourceRecordSets"],"Resource":"arn:aws:route53:::hostedzone/" + zone_id},{"Effect":"Allow","Action":["route53:GetChange"],"Resource":"arn:aws:route53:::change/*"}]}
+        permission_policy = {"Version": "2012-10-17", "Statement": [{"Effect": "Allow", "Action": ["route53:ChangeResourceRecordSets"], "Resource": "arn:aws:route53:::hostedzone/" + zone_id}, {"Effect": "Allow", "Action": ["route53:GetChange"], "Resource": "arn:aws:route53:::change/*"}]}
         permission_policy = json.dumps(permission_policy, indent=2, separators=(',', ': '))
 
         try:
