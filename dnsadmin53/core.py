@@ -122,6 +122,17 @@ class IAM:
             print 'Error getting Role List from IAM'
         return self.roles
 
+    def does_role_exist(self, dns_zone):
+        """
+        Check to see if a zone exists, return True if exists and False missing.
+        """
+        role_name = 'UpdateZone-' + dns_zone
+        try:
+            self.role = self.iam.get_role(role_name)
+            return True
+        except:
+            return False
+
     def create_role(self, dns_zone, zone_id):
         """
         Create DNSADMIN Role for a hosted zone. This creates a hosted zone with permissions that
