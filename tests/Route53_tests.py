@@ -36,6 +36,7 @@ def test_does_zone_exist():
     print result
     tools.assert_true(result)
 
+
 @mock_route53
 def test_get_zone_id():
     conn = boto.connect_route53()
