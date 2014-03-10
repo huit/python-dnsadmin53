@@ -21,15 +21,33 @@ class Route53:
         except boto.route53.exception.DNSServerError as e:
             print e
 
-    def list_zones(self):
+    def create_zone(self, dns_zone, comment=None):
         """
-        List Zones in Route53
+        Create zone, return dns servers for zone if successful, False if error
         """
         try:
-            self.zones = self.r53.get_zones()
+            dns_zone = dottify(dns_zone)
+            if comment is None:
+                self.zone = self.r53.create_hosted_zone(dns_zone)
+            else:
+                self.zone = self.r53.create_hosted_zone(dns_zone, comment, comment)
+            return self.zone
         except boto.route53.exception.DNSServerError as e:
             print e
-        return self.zones
+
+    def does_zone_exist(self, dns_zone):
+        """
+        Check to see if a zone exists, return True if exists and False missing.
+        """
+        try:
+            dns_zone = dottify(dns_zone)
+            self.zone = self.r53.get_hosted_zone_by_name(dns_zone)
+            if hasattr(self.zone, 'GetHostedZoneResponse'):
+                return True
+            else:
+                return False
+        except boto.route53.exception.DNSServerError as e:
+            print e
 
     def get_zone(self, dns_zone):
         """
@@ -55,18 +73,15 @@ class Route53:
             print 'Error Getting Zone ID'
         return self.zone_id
 
-    def does_zone_exist(self, dns_zone):
+    def list_zones(self):
         """
-        Check to see if a zone exists, return True if exists and False missing.
+        List Zones in Route53
         """
         try:
-            dns_zone = dottify(dns_zone)
-            self.zone = self.r53.get_zone(dns_zone)
-            return True
+            self.zones = self.r53.get_zones()
         except boto.route53.exception.DNSServerError as e:
             print e
-        else:
-            return False
+        return self.zones
 
 
 class IAM:
